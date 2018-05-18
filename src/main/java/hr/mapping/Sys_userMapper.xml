@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hr.dao.Sys_userMapper">
+	<resultMap id="BaseResultMap" type="hr.model.Sys_user">
+		<id column="user_login_id" property="userLoginId" jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		user_login_id, user_name, sex, password
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+		where user_login_id = #{userLoginId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		sys_user
+		where user_login_id = #{userLoginId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="hr.model.Sys_user">
+		insert into sys_user
+		(user_login_id, user_name, sex,
+		password)
+		values
+		(#{userName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="hr.model.Sys_user">
+		insert into sys_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userLoginId != null">
+				user_login_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userLoginId != null">
+				#{userLoginId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="hr.model.Sys_user">
+		update sys_user
+		<set>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_login_id = #{userLoginId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="java.lang.String">
+		update sys_user
+		set user_name = #{userName,jdbcType=VARCHAR},
+		sex =
+		#{sex,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR}
+		where
+		user_login_id = #{userLoginId,jdbcType=VARCHAR}
+	</update>
+
+	<resultMap type="hr.model.Sys_user" id="userResultMap"
+		extends="BaseResultMap">
+		<collection property="userRoles" javaType="list"
+			ofType="hr.model.Sys_user_roleKey">
+			<id column="user_login_id" property="userLoginId" jdbcType="VARCHAR" />
+			<id column="role_id" property="roleId" jdbcType="VARCHAR" />
+			<association property="role" javaType="hr.model.Sys_role">
+				<id column="role_id" property="roleId" jdbcType="VARCHAR" />
+				<result column="role_name" property="roleName" jdbcType="VARCHAR" />
+			</association>
+		</collection>
+	</resultMap>
+	<select id="findAllUsers" resultMap="BaseResultMap">
+		SELECT
+		`user_name`
+		, `sex`
+		, `user_login_id`
+		FROM
+		`hr`.`sys_user`
+		where
+		user_name like '%${keyword}%'
+		or sex like '%${keyword}%';
+
+	</select>
+
+	<select id="getUserByName" resultMap="BaseResultMap">
+		select * from sys_user
+		where user_name = #{userName,jdbcType=VARCHAR};
+	</select>
+	
+	<select id="getUserByNameList" resultMap="BaseResultMap">
+		 SELECT  * FROM sys_user
+		WHERE user_name = #{userName,jdbcType=VARCHAR};
+	</select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hr.dao.Sys_permissionMapper" >
+  <resultMap id="BaseResultMap" type="hr.model.Sys_permission" >
+    <id column="permission_id" property="permissionId" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    permission_id, description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission
+    where permission_id = #{permissionId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_permission
+    where permission_id = #{permissionId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="hr.model.Sys_permission" >
+    insert into sys_permission (permission_id, description)
+    values (#{permissionId,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="hr.model.Sys_permission" >
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="permissionId != null" >
+        permission_id,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="permissionId != null" >
+        #{permissionId,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="hr.model.Sys_permission" >
+    update sys_permission
+    <set >
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where permission_id = #{permissionId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="hr.model.Sys_permission" >
+    update sys_permission
+    set description = #{description,jdbcType=VARCHAR}
+    where permission_id = #{permissionId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id = "showAllPermission" resultMap = "BaseResultMap">
+  	select * from sys_permission where description like '%${keyword}%';
+  </select>
+  
+  <select id = "findRolePermission" resultMap = "BaseResultMap">
+  select * from sys_permission where  permission_id in(
+		select permission_id from sys_role_permission where role_id = #{roleId,jdbcType=VARCHAR}
+		)
+  </select>
+  
+  <select id = "getAllPermissionWithoutRole" resultMap = "BaseResultMap">
+  SELECT * FROM sys_permission WHERE permission_id NOT IN (SELECT permission_id FROM sys_role_permission WHERE role_id = #{roleId,jdbcType=VARCHAR})
+  </select>
+  
+  <select id="getPermissions" resultMap="BaseResultMap">
+		SELECT
+		DISTINCT
+		`sys_role_permission`.`permission_id`
+
+		FROM
+		`hr`.`sys_role_permission`,
+		`hr`.`sys_user_role`
+		JOIN `hr`.`sys_user`
+		ON (`sys_user_role`.`user_login_id` = `sys_user`.`user_login_id`AND
+		`sys_user`.`user_name` = #{userName,jdbcType=VARCHAR})
+
+	</select>
+</mapper>

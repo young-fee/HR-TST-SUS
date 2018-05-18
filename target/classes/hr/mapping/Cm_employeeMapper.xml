@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hr.dao.Cm_employeeMapper">
+	<resultMap id="BaseResultMap" type="hr.model.Cm_employee">
+		<id column="employee_id" property="employeeId" jdbcType="VARCHAR" />
+		<result column="employee_name" property="employeeName"
+			jdbcType="VARCHAR" />
+		<result column="e_sex" property="eSex" jdbcType="VARCHAR" />
+		<result column="e_age" property="eAge" jdbcType="VARCHAR" />
+		<result column="e_name" property="eName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		employee_id, employee_name, e_sex, e_age, e_name
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from cm_employee
+		where employee_id = #{employeeId,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		cm_employee
+		where employee_id = #{employeeId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="hr.model.Cm_employee">
+		insert into cm_employee
+		(employee_id, employee_name, e_sex,
+		e_age, e_name)
+		values
+		(#{employeeId,jdbcType=VARCHAR}, #{employeeName,jdbcType=VARCHAR},
+		#{eSex,jdbcType=VARCHAR},
+		#{eAge,jdbcType=VARCHAR},
+		#{eName,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="hr.model.Cm_employee">
+		insert into cm_employee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="employeeId != null">
+				employee_id,
+			</if>
+			<if test="employeeName != null">
+				employee_name,
+			</if>
+			<if test="eSex != null">
+				e_sex,
+			</if>
+			<if test="eAge != null">
+				e_age,
+			</if>
+			<if test="eName != null">
+				e_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="employeeId != null">
+				#{employeeId,jdbcType=VARCHAR},
+			</if>
+			<if test="employeeName != null">
+				#{employeeName,jdbcType=VARCHAR},
+			</if>
+			<if test="eSex != null">
+				#{eSex,jdbcType=VARCHAR},
+			</if>
+			<if test="eAge != null">
+				#{eAge,jdbcType=VARCHAR},
+			</if>
+			<if test="eName != null">
+				#{eName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="hr.model.Cm_employee">
+		update cm_employee
+		<set>
+			<if test="employeeName != null">
+				employee_name = #{employeeName,jdbcType=VARCHAR},
+			</if>
+			<if test="eSex != null">
+				e_sex = #{eSex,jdbcType=VARCHAR},
+			</if>
+			<if test="eAge != null">
+				e_age = #{eAge,jdbcType=VARCHAR},
+			</if>
+			<if test="eName != null">
+				e_name = #{eName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where employee_id = #{employeeId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="hr.model.Cm_employee">
+		update cm_employee
+		set employee_name = #{employeeName,jdbcType=VARCHAR},
+		e_sex =
+		#{eSex,jdbcType=VARCHAR},
+		e_age = #{eAge,jdbcType=VARCHAR},
+		e_name =
+		#{eName,jdbcType=VARCHAR}
+		where employee_id =
+		#{employeeId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="GetAllEmployee" resultMap="BaseResultMap">
+		select * from cm_employee where employee_name like
+		'%${keyword}%' or e_sex like '%${keyword}%' or e_age like '%${keyword}%' or e_name like '%${keyword}%' limit #{start},#{end};
+
+	</select>
+	<select id= "findEmployeeByDepartment" resultMap = "BaseResultMap">
+		select * from cm_employee where  employee_id in(
+		select employee_id from cm_department_employee where department_id = #{departmentId,jdbcType=VARCHAR}
+		)
+	</select>
+	<select id = "GetAllEmployeeWithoutDepartment"  resultMap = "BaseResultMap">
+		SELECT * FROM cm_employee WHERE employee_id NOT IN (SELECT employee_id FROM cm_department_employee )
+	</select>
+	
+</mapper>
